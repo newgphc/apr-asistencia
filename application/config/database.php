@@ -77,8 +77,8 @@ $db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
 	'username' => 'root',
-	'password' => '1234',
-	'database' => 'reunion2017',
+	'password' => '',
+	'database' => '',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
@@ -97,11 +97,11 @@ $db['default'] = array(
 
 
 $db['hospital'] = array(
-	'dsn'	=> 'dblib:host=192.168.43.41:1433;dbname=HOSPITAL2',
+	'dsn'	=> 'dblib:host=192.168.2.32:1433;dbname=SS2',
 	//'hostname' => '',
-	'username' => 'sa',
-	'password' => 'sqlserver',
-	//'database' => 'HOSPITAL2',
+	'username' => '',
+	'password' => '',
+	//'database' => '',
 	'dbdriver' => 'pdo',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
@@ -119,11 +119,11 @@ $db['hospital'] = array(
 );
 
 $db['champa'] = array(
-	'dsn'	=> 'dblib:host=192.168.43.41:1433;dbname=CHAMPA2',
+	'dsn'	=> 'dblib:host=192.168.2.32:1433;dbname=CA2',
 	//'hostname' => '',
-	'username' => 'sa',
-	'password' => 'sqlserver',
-	//'database' => 'HOSPITAL2',
+	'username' => '',
+	'password' => '',
+	//'database' => '',
 	'dbdriver' => 'pdo',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
