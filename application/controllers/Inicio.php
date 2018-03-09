@@ -38,51 +38,84 @@ class Inicio extends CI_Controller {
 	{
 		$mantener = (null !== $this->input->post('mantener')) ? $this->input->post('mantener') : '';
 		header("Content-Type:text/plain");
-		echo ($mantener == 'manten') ? 'Manteniendo la session...' : 'error'; 
+		echo ($mantener == 'manten') ? 'Manteniendo la session...' : 'error';
 	}
 
-	public function printer()
+	public function print()
 	{
-		
-		$connector = new NetworkPrintConnector("192.168.1.112", 9100);
-		$printer = new Printer($connector);
+			$printer_id = $this->session->userdata('id_print');
+			$printer_ip = $this->ConfigModel->getPrinterById($printer_id);
 
-		$numero = "20435";
-		$rut="1.065.447-5";
-		$nombre="Lúis Israel Moreno Contreras dhdhdhdhdhdhdhdhdhdhd hdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdh hdhdhdhdhdhhdhdhdhdh";
-		$direccion="Manuel Rodriguez 312, Champa. dhdhdhdhdhdhdhdhdhdhd hdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdh hdhdhdhdhdhhdhdhdhdh";
-		$rutrep="17.871.284-5";
-		$nombrep="José Luis Sánchez Moreno dhdhdhdhdhdhdhdhdhdhd hdhdhdhdhdhdhdhdhdhdhdhdhdhdhdhdh hdhdhdhdhdhhdhdhdhdh";
-		
-		try 
-		{
-			$asis = 0;			
-			$printer->text("************************************************\n\n");
-			$printer->text("              Ticket de asistencia\n");
-			$printer->text("           Junta Anual de Socios " . date('Y') . "\n\n");
-			$printer->text("************************************************\n\n");
-			$printer->text("   Fecha:  " .date("d-m-Y"). "\n");
-			$printer->text("   Hora:  " . date("H:i:s"). "\n");
-			$printer->text("   Numero de cliente:   " .$numero. "\n");
-			$printer->text("   Rut socio:   " . $rut."\n");
-			$printer->text("   Nombre: " . chunk_split(utf8_decode($nombre), 34, "\n   ")."\n");  
-			$printer->text("   Direccion: " . chunk_split(utf8_decode($direccion), 31, "\n   ")."\n");   	
+			$response = new stdClass();
 
-			if ($asis == 1)
-            {
-				 $printer->text("   Rut representante:  " . $rutrep . "\n");   
-				 $printer->text("   Nombre representante: " . chunk_split(utf8_decode($nombrep), 20, "\n   ") . "\n\n");
-            }
+			if(null !== $printer_ip)
+			{
+					$id_socio = $this->input->post('iduser');
+					$genero = $this->input->post('sex');
 
-			$printer->text("************************************************\n\n");
-			$printer->text("      ***     Valido para el sorteo     ***     \n\n");
-			$printer->text("************************************************\n");
+					$this->InicioModel->insertaAsistencia($id_socio, $genero);
 
-			$printer->feed(3);
-			$printer->cut(Printer::CUT_PARTIAL);
-		} finally {
-			$printer->close();
-		}
+					$printer_ip = $printer_ip->value_impresora;
+
+					$connector = new NetworkPrintConnector($printer_ip, 9100);
+					$printer = new Printer($connector);
+
+					$rut = $this->input->post('rut');
+					$nombre = $this->input->post('nombre');
+					$rutrep = $this->input->post('rutrep');
+					$nombrep = $this->input->post('nrep');
+
+					$response->success = true;
+					$response->message = "Impresión correcta.";
+					$response->ip = $printer_ip;
+
+					try
+					{
+							$asis = $this->input->post('tasis');
+							$printer->text("************************************************\n\n");
+							$printer->text("              Ticket de asistencia\n");
+							$printer->text("           Junta Anual de Socios " . date('Y') . "\n\n");
+							$printer->text("************************************************\n\n");
+							$printer->text("   Fecha:  " .date("d-m-Y"). "\n");
+							$printer->text("   Hora:  " . date("H:i:s"). "\n");
+							//$printer->text("   Numero de cliente:   " .$numero. "\n");
+							$printer->text("   Rut socio:   " . $rut."\n");
+							$printer->text("   Nombre: " . chunk_split($nombre, 34, "\n   ")."\n");
+							//$printer->text("   Direccion: " . chunk_split(utf8_decode($direccion), 31, "\n   ")."\n");
+
+							if($asis == 2)
+				      {
+									$printer->text("   Rut representante:  " . $rutrep . "\n");
+								 	$printer->text("   Nombre representante: " . chunk_split($nombrep, 20, "\n   ") . "\n\n");
+				      }
+
+							$printer->text("************************************************\n\n");
+							$printer->text("      ***     Valido para el sorteo     ***     \n\n");
+							$printer->text("************************************************\n");
+
+							$printer->feed(3);
+							$printer->cut(Printer::CUT_PARTIAL);
+
+							$response->success = true;
+							$response->message = "Impresión correcta.";
+							$response->ip = $printer_ip;
+					}
+					catch (Exception $e) {
+							$response->success = false;
+							$response->message = "Ha ocurrido un error al intentar establecer cominicación con la impresora.";
+					}finally {
+							$printer->close();
+					}
+			}
+			else
+			{
+					$response->success = false;
+					$response->message = "Ha ocurrido un error al llamar la impresora.";
+			}
+
+			//header("Content-Type:application/json");
+			//echo json_encode($response);
+			redirect('inicio');
 	}
 
 	public function selectprint()
@@ -94,7 +127,7 @@ class Inicio extends CI_Controller {
 	public function guardaprint()
 	{
 		$guardar = ($this->input->post('guardar')) ? $this->input->post('guardar'): '';
-		
+
 		if($guardar == 'Ingresar')
 		{
 			$selectprint = (null != $this->input->post('selprint') && $this->input->post('selprint') != '-1') ? $this->input->post('selprint') : null ;
@@ -108,7 +141,7 @@ class Inicio extends CI_Controller {
 		$myArray = array();
 		$result = $this->InicioModel->getCliente($this->input->get('term'))->result_object();
 
-        foreach($result as $row) 
+        foreach($result as $row)
 		{
             $tempArray = array(
 								'label'=>$row->nombre_completo,

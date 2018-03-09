@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-class ConfigModel extends CI_Model 
+class ConfigModel extends CI_Model
 {
 
     //Lista todos los clientes
@@ -22,7 +22,7 @@ class ConfigModel extends CI_Model
         $this->db->empty_table('usuarios');
         $sqlserverhos = $this->load->database('hospital', TRUE);
         $Usuarios = $sqlserverhos->query("SELECT Usuario, Nombre, Pass, Email FROM Usuarios;")->result_object();
-        
+
         $usuario['Usuario'] = 'Admin';
         $usuario['Nombre'] = 'Administrador';
         $usuario['Pass'] = 'e3d49eb7d5bd443589ed96f77b2e9a1c2504b359d5c200c1401a2266065a8856';
@@ -45,36 +45,43 @@ class ConfigModel extends CI_Model
             $this->db->insert('usuarios', $usuario);
         }
     }
-    
+
     //Busca un Cliente especifico
     public function saveCliente($clienteData)
-    {	
+    {
         $this->db->reconnect();
         $this->db->query('call pa_socio_ingresa(\''.$clienteData['COD'].'\',\''.$clienteData['RUT'].'\',\''.$clienteData['DIG'].'\',\''.$clienteData['NOMBRE'].'\',\''.$clienteData['APELLIDO'].'\',\''.$clienteData['DIR'].'\',\'0\',\'0\')');
     }
 
     public function loadListaImpresoras()
-    {	
+    {
         $this->db->reconnect();
         $result = $this->db->query("CALL lista_impresoras()")->result_object();
         return $result;
     }
 
+    public function getPrinterById($id=0)
+    {
+        $this->db->reconnect();
+        $result = $this->db->query("SELECT value_impresora FROM impresoras WHERE id_impresora = ".$id)->first_row();
+        return $result;
+    }
+
     public function deletePrint($idprint=0)
-    {	
+    {
         $this->db->reconnect();
         $result = $this->db->query("delete from impresoras where id_impresora = '".$idprint."'");
         return $result;
     }
 
     public function addPrint($data)
-    {	
+    {
         $this->db->reconnect();
         $this->db->insert('impresoras', $data);
     }
 
     public function getNombreUser($id)
-    {	
+    {
         $this->db->reconnect();
         $this->db->from('usuarios');
         $this->db->where('id_user', $id);
