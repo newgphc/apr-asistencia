@@ -136,6 +136,12 @@ class Inicio extends CI_Controller {
 		}
 	}
 
+	public function cambiaprint()
+	{
+			$this->session->unset_userdata('id_print');
+			redirect('inicio');
+	}
+
 	public function autocomplete()
 	{
 		$myArray = array();
