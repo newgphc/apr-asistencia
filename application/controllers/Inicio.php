@@ -1,5 +1,6 @@
 <?php
 		use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
+		use Mike42\Escpos\CapabilityProfile;
 		//use Mike42\Escpos\EscposImage;
 		use Mike42\Escpos\Printer;
 defined('BASEPATH') OR exit('No direct script access allowed');
@@ -46,32 +47,24 @@ class Inicio extends CI_Controller {
 			$printer_id = $this->session->userdata('id_print');
 			$printer_ip = $this->ConfigModel->getPrinterById($printer_id);
 
-			$response = new stdClass();
-
 			if(null !== $printer_ip)
 			{
 					$id_socio = $this->input->post('iduser');
 					$genero = $this->input->post('sex');
-
-					$this->InicioModel->insertaAsistencia($id_socio, $genero);
-
-					$printer_ip = $printer_ip->value_impresora;
-
-					$connector = new NetworkPrintConnector($printer_ip, 9100);
-					$printer = new Printer($connector);
-
+					$asis = $this->input->post('tasis');
 					$rut = $this->input->post('rut');
 					$nombre = $this->input->post('nombre');
 					$rutrep = $this->input->post('rutrep');
 					$nombrep = $this->input->post('nrep');
 
-					$response->success = true;
-					$response->message = "Impresión correcta.";
-					$response->ip = $printer_ip;
+					$printer_ip = $printer_ip->value_impresora;
+
+					$connector = new NetworkPrintConnector($printer_ip, 9100);
+					$profile = CapabilityProfile::load("simple");
+					$printer = new Printer($connector,$profile);
 
 					try
 					{
-							$asis = $this->input->post('tasis');
 							$printer->text("************************************************\n\n");
 							$printer->text("              Ticket de asistencia\n");
 							$printer->text("           Junta Anual de Socios " . date('Y') . "\n\n");
@@ -95,27 +88,25 @@ class Inicio extends CI_Controller {
 
 							$printer->feed(3);
 							$printer->cut(Printer::CUT_PARTIAL);
-
-							$response->success = true;
-							$response->message = "Impresión correcta.";
-							$response->ip = $printer_ip;
+							$this->InicioModel->insertaAsistencia($id_socio, $genero);
 					}
-					catch (Exception $e) {
-							$response->success = false;
-							$response->message = "Ha ocurrido un error al intentar establecer cominicación con la impresora.";
-					}finally {
+					finally {
 							$printer->close();
 					}
 			}
-			else
-			{
-					$response->success = false;
-					$response->message = "Ha ocurrido un error al llamar la impresora.";
-			}
-
 			//header("Content-Type:application/json");
 			//echo json_encode($response);
 			redirect('inicio');
+	}
+
+	public function test()
+	{
+			$connector = new NetworkPrintConnector('192.168.1.110', 9100);
+			$profile = CapabilityProfile::load("simple");
+			$printer = new Printer($connector,$profile);
+			$printer -> text("Hello World!\n");
+			$printer -> cut();
+			$printer -> close();
 	}
 
 	public function selectprint()

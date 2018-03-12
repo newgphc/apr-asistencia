@@ -67,7 +67,7 @@
                                 $('#nombre').val('');
                                 datossocio = '<form id="frmcnfrm" method="POST" action="<?=site_url()?>/inicio/print" onSubmit="return validaGenero();"><table class="table table-bordered table-striped"><tr><td colspan="2"><strong>Datos personales del Socio</strong></td></tr><tr><td width="42%">Rut</td><td width="58%">' + data.rut + '<input type="hidden" name="rut" value="' + data.rut + '"/></td></tr><tr><td width="42%">Nombre completo</td><td width="58%">' + data.nombre + '<input type="hidden" name="nombre" value="' + data.nombre + '"/></td></tr>';
                                 datosfinales = '<tr><td width="42%">Genero del socio / Representante</td><td width="58%"></td></tr><tr><td><input type="hidden" name="iduser" value="' + data.id_ai_soc + '"/><input type="radio" name="sex" id="masculino" value="1"><label for="masculino">Masculino</label><input type="radio" name="sex" id="femenino" style="margin-left: 40px;" value="2"><label for="femenino">Femenino</label></td><td><input type="Submit" id="confrm" name="confrm" class="btna btn btn-primary" style="margin-top: -7px;margin-left: 18px;position: absolute;" value="Confirmar asistencia"/></td></tr></table></form>';
-                                if(data.asist_final != 1){
+
                                     if (data.asis_soc == 0) {
                                         tabla = datossocio + datosfinales;
                                     }
@@ -81,9 +81,6 @@
                                     else {
                                         tabla = '<div class="alert alert-info"><strong>Error!.</strong> Se ha producido un error al buscar.</div>';
                                     }
-                                }else{
-                                    tabla = '<div class="alert alert-success"><strong>Importante!.</strong> El socio ' + data.nombre + ', Ya esta registrdo.</div>';
-                                }
                                 $('#tabla').fadeIn(1000).html(tabla);
                             }
                             else {
@@ -153,7 +150,6 @@
                                 $('#nombre').val('');
                                 datossocio = '<form id="frmcnfrm" method="POST" action="<?=site_url()?>/inicio/print" onSubmit="return validaGenero();"><table class="table table-bordered table-striped"><tr><td colspan="2"><strong>Datos personales del Socio</strong></td></tr><tr><td width="42%">Rut</td><td width="58%">' + data.rut + '<input type="hidden" name="rut" value="' + data.rut + '"/></td></tr><tr><td width="42%">Nombre completo</td><td width="58%">' + data.nombre + '<input type="hidden" name="nombre" value="' + data.nombre + '"/></td></tr>';
                                 datosfinales = '<tr><td width="42%">Genero del socio / Representante</td><td width="58%"></td></tr><tr><td><input type="hidden" name="iduser" value="' + data.id_ai_soc + '"/><input type="radio" name="sex" id="masculino" value="1"><label for="masculino">Masculino</label><input type="radio" name="sex" id="femenino" style="margin-left: 40px;" value="2"><label for="femenino">Femenino</label></td><td><input type="Submit" id="confrm" name="confrm" class="btna btn btn-primary" style="margin-top: -7px;margin-left: 18px;position: absolute;" value="Confirmar asistencia"/></td></tr></table></form>';
-                                if(data.asist_final != 1){
                                     if (data.asis_soc == 0) {
                                         tabla = datossocio + datosfinales;
                                     }
@@ -167,9 +163,6 @@
                                     else {
                                         tabla = '<div class="alert alert-info"><strong>Error!.</strong> Se ha producido un error al buscar.</div>';
                                     }
-                                  }else{
-                                      tabla = '<div class="alert alert-success"><strong>Importante!.</strong> El socio ' + data.nombre + ', Ya esta registrdo.</div>';
-                                  }
                                 $('#tabla').fadeIn(1000).html(tabla);
                             }
                             else {
